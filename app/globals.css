@@ -52,6 +52,44 @@ body[data-idle="deep"] {
   animation: focus-line-pulse 48s ease-in-out infinite;
 }
 
+/* Soundscape sliders — quiet, accent-tinted, frosted thumbs. */
+.ss-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 5.5rem;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(var(--glow), 0.18);
+  outline: none;
+  cursor: pointer;
+}
+.ss-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: rgb(var(--glow));
+  box-shadow: 0 0 8px rgba(var(--glow), 0.5);
+  transition: transform 200ms ease;
+}
+.ss-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.25);
+}
+.ss-slider::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: none;
+  border-radius: 999px;
+  background: rgb(var(--glow));
+  box-shadow: 0 0 8px rgba(var(--glow), 0.5);
+}
+.ss-slider::-moz-range-track {
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(var(--glow), 0.18);
+}
+
 /* Honor the OS-level reduced-motion preference and our manual toggle: the
    ambient field degrades to a near-static gradient and pulses cease. */
 @media (prefers-reduced-motion: reduce) {

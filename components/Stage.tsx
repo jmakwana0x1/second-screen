@@ -4,6 +4,7 @@ import { useEffect, useMemo } from "react";
 import AmbientField from "./AmbientField";
 import Clock from "./Clock";
 import FocusLine from "./FocusLine";
+import SoundscapeMixer, { EMPTY_MIXER, MixerLevels } from "./SoundscapeMixer";
 import { useBreath } from "@/hooks/useBreath";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { usePersistentState } from "@/hooks/usePersistentState";
@@ -28,6 +29,10 @@ export default function Stage() {
   const [focusLine, setFocusLine] = usePersistentState<string>(
     STORAGE_KEYS.focusLine,
     "",
+  );
+  const [mixer, setMixer] = usePersistentState<MixerLevels>(
+    STORAGE_KEYS.mixer,
+    EMPTY_MIXER,
   );
   const reduceMotion = useReducedMotion(reduceMotionPref);
 
@@ -55,6 +60,10 @@ export default function Stage() {
           opacity={IDLE.focusOpacity.active}
           reduceMotion={reduceMotion}
         />
+      </div>
+
+      <div className="fixed inset-x-0 bottom-[5vmin] flex justify-center">
+        <SoundscapeMixer levels={mixer} onChange={setMixer} />
       </div>
     </main>
   );

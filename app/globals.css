@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* The void. */
+  --base: #060709;
+  /* The single accent glow. Overridden at runtime from config/localStorage. */
+  --glow: 150, 220, 235;
+  /* Live breath value, 0..1, written by the breathing hook each frame. */
+  --breath: 0;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--base);
+  color: rgb(var(--glow));
+  overflow: hidden;
+  /* No text selection / drag — this is an object, not a document. */
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
+}
+
+/* Hide the cursor when the screen has settled into deep idle. */
+body[data-idle="deep"] {
+  cursor: none;
+}
+
+/* Honor the OS-level reduced-motion preference and our manual toggle: the
+   ambient field degrades to a near-static gradient and pulses cease. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --breath: 0.5;
+  }
+}

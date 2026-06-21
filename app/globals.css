@@ -30,10 +30,35 @@ body[data-idle="deep"] {
   cursor: none;
 }
 
+/* The caret in the focus-line editor uses the accent glow. */
+.caret-glow {
+  caret-color: rgb(var(--glow));
+}
+
+/* The focus line occasionally breathes slightly brighter — a soft, non-nagging
+   reminder of intent. A long, mostly-flat cycle with one gentle swell, so it is
+   never something to watch. */
+@keyframes focus-line-pulse {
+  0%,
+  78%,
+  100% {
+    filter: brightness(1);
+  }
+  88% {
+    filter: brightness(1.6);
+  }
+}
+.focus-line-pulse {
+  animation: focus-line-pulse 48s ease-in-out infinite;
+}
+
 /* Honor the OS-level reduced-motion preference and our manual toggle: the
    ambient field degrades to a near-static gradient and pulses cease. */
 @media (prefers-reduced-motion: reduce) {
   :root {
     --breath: 0.5;
+  }
+  .focus-line-pulse {
+    animation: none;
   }
 }

@@ -3,6 +3,7 @@
 import { useEffect, useMemo } from "react";
 import AmbientField from "./AmbientField";
 import Clock from "./Clock";
+import FocusLine from "./FocusLine";
 import { useBreath } from "@/hooks/useBreath";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { usePersistentState } from "@/hooks/usePersistentState";
@@ -24,6 +25,10 @@ export default function Stage() {
     STORAGE_KEYS.reduceMotion,
     false,
   );
+  const [focusLine, setFocusLine] = usePersistentState<string>(
+    STORAGE_KEYS.focusLine,
+    "",
+  );
   const reduceMotion = useReducedMotion(reduceMotionPref);
 
   useBreath(reduceMotion);
@@ -36,13 +41,21 @@ export default function Stage() {
   const accentRgb = useMemo(() => parseRgb(accent), [accent]);
 
   return (
-    <main className="fixed inset-0 flex items-center justify-center">
+    <main className="fixed inset-0 flex flex-col items-center justify-center">
       <AmbientField
         accent={accentRgb}
         sessionProgress={0}
         reduceMotion={reduceMotion}
       />
       <Clock opacity={IDLE.clockOpacity.active} reduceMotion={reduceMotion} />
+      <div className="mt-[2vmin]">
+        <FocusLine
+          value={focusLine}
+          onChange={setFocusLine}
+          opacity={IDLE.focusOpacity.active}
+          reduceMotion={reduceMotion}
+        />
+      </div>
     </main>
   );
 }

@@ -103,7 +103,7 @@ export default function AmbientField({
       // Additive soft light pools.
       ctx.globalCompositeOperation = "lighter";
       const t = timeMs / 1000;
-      const baseAlpha = 0.05 + breath * 0.045;
+      const baseAlpha = 0.08 + breath * 0.06;
 
       for (const blob of blobs) {
         const drift = reduceMotion ? 0 : FIELD.driftRange;
@@ -118,7 +118,7 @@ export default function AmbientField({
         // urate slightly — the whole field cools without changing brightness.
         const hue = ah + blob.hueShift + cool * (250 - (ah + blob.hueShift)) * 0.6;
         const sat = Math.min(0.85, asat * 0.95) * (1 - cool * 0.2);
-        const light = Math.min(0.7, al + 0.08);
+        const light = Math.min(0.72, al + 0.13);
         const [r, g, b] = hslToRgb([hue, sat, light]);
         const alpha = baseAlpha * blob.weight * (1 - cool * 0.18);
 

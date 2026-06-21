@@ -7,6 +7,7 @@ import FocusLine from "./FocusLine";
 import SoundscapeMixer, { EMPTY_MIXER, MixerLevels } from "./SoundscapeMixer";
 import FocusRing from "./FocusRing";
 import Settings from "./Settings";
+import FullscreenButton from "./FullscreenButton";
 import { useBreath } from "@/hooks/useBreath";
 import { useFocusSession } from "@/hooks/useFocusSession";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -98,7 +99,7 @@ export default function Stage() {
       </div>
 
       <div
-        className="fixed bottom-[5vmin] right-[4vmin] flex justify-center"
+        className="fixed bottom-[5vmin] right-[4vmin] flex items-center gap-4"
         style={controlStyle}
       >
         <Settings
@@ -107,6 +108,7 @@ export default function Stage() {
           reduceMotion={reduceMotionPref}
           onReduceMotionChange={setReduceMotionPref}
         />
+        <FullscreenButton />
       </div>
     </main>
   );

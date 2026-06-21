@@ -40,9 +40,9 @@ export default function FocusLine({
   const shared =
     "w-[min(80vw,900px)] bg-transparent text-center font-sans outline-none";
   const typography = {
-    fontSize: "min(4.2vmin, 40px)",
+    fontSize: "min(3.2vmin, 30px)",
     fontWeight: 300,
-    letterSpacing: "0.01em",
+    letterSpacing: "0.04em",
     color: "rgb(var(--glow))",
   } as const;
 

@@ -69,6 +69,8 @@ export default function Stage() {
         sessionProgress={session.progress}
         reduceMotion={reduceMotion}
       />
+      <div className="grain" aria-hidden />
+
 
       <div
         className="fixed inset-x-0 top-[5vmin] flex justify-center"
@@ -79,7 +81,7 @@ export default function Stage() {
 
       <Clock opacity={IDLE.clockOpacity[idle]} reduceMotion={reduceMotion} />
 
-      <div className="mt-[2vmin]">
+      <div className="mt-[5vmin]">
         <FocusLine
           value={focusLine}
           onChange={setFocusLine}

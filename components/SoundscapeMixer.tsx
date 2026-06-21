@@ -58,37 +58,48 @@ export default function SoundscapeMixer({
 
   return (
     <div
-      className="flex items-end gap-5 rounded-2xl border border-white/5 bg-white/[0.03] px-5 py-3 backdrop-blur-md"
-      style={{ boxShadow: "0 0 40px rgba(0,0,0,0.4)" }}
+      className="flex items-end gap-7 rounded-[20px] border border-white/[0.06] px-7 py-4 backdrop-blur-xl"
+      style={{
+        background:
+          "linear-gradient(rgba(255,255,255,0.04), rgba(255,255,255,0.015))",
+        boxShadow:
+          "0 8px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05)",
+      }}
     >
-      {LAYERS.map(({ id, label }) => (
-        <label
-          key={id}
-          className="flex flex-col items-center gap-2"
-          title={label}
-        >
-          <input
-            type="range"
-            min={0}
-            max={1}
-            step={0.01}
-            value={levels[id]}
-            onChange={(e) => set(id, Number(e.target.value))}
-            aria-label={label}
-            className="ss-slider"
-          />
-          <span
-            className="text-[10px] uppercase tracking-[0.18em]"
-            style={{
-              color: "rgb(var(--glow))",
-              opacity: levels[id] > 0 ? 0.7 : 0.3,
-              transition: "opacity 600ms",
-            }}
+      {LAYERS.map(({ id, label }) => {
+        const pct = Math.round(levels[id] * 100);
+        return (
+          <label
+            key={id}
+            className="flex flex-col items-center gap-2.5"
+            title={label}
           >
-            {label}
-          </span>
-        </label>
-      ))}
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.01}
+              value={levels[id]}
+              onChange={(e) => set(id, Number(e.target.value))}
+              aria-label={label}
+              className="ss-slider"
+              style={{
+                background: `linear-gradient(to right, rgb(var(--glow)) ${pct}%, rgba(var(--glow),0.14) ${pct}%)`,
+              }}
+            />
+            <span
+              className="text-[10px] uppercase tracking-[0.2em]"
+              style={{
+                color: "rgb(var(--glow))",
+                opacity: levels[id] > 0 ? 0.65 : 0.28,
+                transition: "opacity 600ms",
+              }}
+            >
+              {label}
+            </span>
+          </label>
+        );
+      })}
     </div>
   );
 }

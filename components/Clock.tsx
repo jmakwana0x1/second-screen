@@ -9,7 +9,7 @@ interface ClockProps {
   reduceMotion: boolean;
 }
 
-function formatTime(now: Date): string {
+function parts(now: Date): { hh: string; mm: string } {
   let h = now.getHours();
   const m = now.getMinutes();
   if (!CLOCK.hour24) {
@@ -18,51 +18,44 @@ function formatTime(now: Date): string {
   }
   const hh = CLOCK.hour24 ? String(h).padStart(2, "0") : String(h);
   const mm = String(m).padStart(2, "0");
-  return `${hh}:${mm}`;
+  return { hh, mm };
 }
 
 /**
- * The anchor: a large, quiet clock. Time reads in under a second. Seconds are a
- * thin sweeping ring rather than ticking digits, so there is ambient motion but
- * nothing to read. The whole thing pulses almost imperceptibly with the breath
- * (via the --breath CSS variable), never demanding attention.
+ * The anchor: a large, quiet, ultra-thin clock that reads in under a second.
+ * Seconds are a single soft point of light sweeping a faint ring — ambient
+ * motion with nothing to read, and no hard tick or once-a-minute snap. The
+ * whole thing pulses almost imperceptibly with the breath (via --breath).
  */
 export default function Clock({ opacity, reduceMotion }: ClockProps) {
-  const [time, setTime] = useState("");
-  const ringRef = useRef<SVGCircleElement>(null);
+  const [time, setTime] = useState<{ hh: string; mm: string } | null>(null);
+  const sweepRef = useRef<SVGGElement>(null);
 
-  // Update the digits once per minute; no second-by-second text churn.
+  // Update the digits each minute; no second-by-second text churn.
   useEffect(() => {
-    const update = () => setTime(formatTime(new Date()));
+    const update = () => setTime(parts(new Date()));
     update();
     const id = window.setInterval(update, 1000 * 15);
     return () => window.clearInterval(id);
   }, []);
 
-  // Sweep the seconds ring smoothly with requestAnimationFrame.
+  // Sweep the seconds point smoothly around the ring.
   useEffect(() => {
     if (!CLOCK.showSecondsRing) return;
-    const circle = ringRef.current;
-    if (!circle) return;
-    const radius = circle.r.baseVal.value;
-    const circumference = 2 * Math.PI * radius;
-    circle.style.strokeDasharray = `${circumference}`;
+    const g = sweepRef.current;
+    if (!g) return;
 
-    const apply = (frac: number) => {
-      circle.style.strokeDashoffset = `${circumference * (1 - frac)}`;
-    };
+    const apply = (frac: number) =>
+      g.setAttribute("transform", `rotate(${frac * 360} 50 50)`);
 
     if (reduceMotion) {
-      const now = new Date();
-      apply(now.getSeconds() / 60);
+      apply(new Date().getSeconds() / 60);
       return;
     }
-
     let raf = 0;
     const tick = () => {
       const now = new Date();
-      const frac = (now.getSeconds() + now.getMilliseconds() / 1000) / 60;
-      apply(frac);
+      apply((now.getSeconds() + now.getMilliseconds() / 1000) / 60);
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
@@ -71,54 +64,70 @@ export default function Clock({ opacity, reduceMotion }: ClockProps) {
 
   return (
     <div
-      className="relative flex items-center justify-center transition-opacity"
+      className="relative flex items-center justify-center"
       style={{
         opacity,
-        transitionDuration: "1600ms",
-        // Almost-imperceptible breath pulse on scale + glow.
-        transform: "scale(calc(1 + var(--breath) * 0.006))",
+        transition: "opacity 1600ms ease",
+        transform: "scale(calc(1 + var(--breath) * 0.005))",
       }}
     >
       {CLOCK.showSecondsRing && (
         <svg
-          className="absolute"
-          width="min(62vmin, 620px)"
-          height="min(62vmin, 620px)"
+          className="pointer-events-none absolute"
+          width="min(78vmin, 760px)"
+          height="min(78vmin, 760px)"
           viewBox="0 0 100 100"
           aria-hidden
         >
+          {/* Faint halo track the light travels along. */}
           <circle
-            ref={ringRef}
             cx="50"
             cy="50"
-            r="46"
+            r="47"
             fill="none"
             stroke="rgb(var(--glow))"
-            strokeWidth={CLOCK.ringStroke / 4}
-            strokeLinecap="round"
-            transform="rotate(-90 50 50)"
-            style={{
-              opacity: 0.35,
-              filter: "drop-shadow(0 0 6px rgba(var(--glow), 0.4))",
-            }}
+            strokeWidth="0.15"
+            style={{ opacity: 0.12 }}
           />
+          {/* The sweeping point of light. */}
+          <g ref={sweepRef}>
+            <circle
+              cx="50"
+              cy="3"
+              r="0.9"
+              fill="rgb(var(--glow))"
+              style={{
+                filter:
+                  "drop-shadow(0 0 2px rgba(var(--glow), 0.9)) drop-shadow(0 0 5px rgba(var(--glow), 0.6))",
+              }}
+            />
+          </g>
         </svg>
       )}
+
       <time
-        className="select-none font-sans tabular-nums"
+        className="select-none tabular-nums"
         style={{
-          fontSize: "min(26vmin, 260px)",
-          fontWeight: 200,
-          letterSpacing: "-0.03em",
+          fontSize: "min(23vmin, 270px)",
+          fontWeight: 100,
+          letterSpacing: "0.02em",
+          lineHeight: 1,
           color: "rgb(var(--glow))",
-          opacity: 0.92,
-          // The glow swells gently with the breath.
+          opacity: 0.96,
           textShadow:
-            "0 0 calc(28px + var(--breath) * 26px) rgba(var(--glow), calc(0.18 + var(--breath) * 0.16))",
+            "0 0 1px rgba(var(--glow), 0.5), 0 0 calc(34px + var(--breath) * 22px) rgba(var(--glow), calc(0.12 + var(--breath) * 0.1))",
         }}
         suppressHydrationWarning
       >
-        {time || " "}
+        {time ? (
+          <>
+            {time.hh}
+            <span style={{ opacity: 0.32, margin: "0 0.02em" }}>:</span>
+            {time.mm}
+          </>
+        ) : (
+          " "
+        )}
       </time>
     </div>
   );

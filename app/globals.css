@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  /* The void. */
-  --base: #060709;
+  /* The void — a near-black with the faintest cool cast, never flat #000. */
+  --base: #05060b;
   /* The single accent glow. Overridden at runtime from config/localStorage. */
   --glow: 150, 220, 235;
   /* Live breath value, 0..1, written by the breathing hook each frame. */
@@ -23,6 +23,21 @@ body {
   user-select: none;
   -webkit-user-select: none;
   cursor: default;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Film grain: a faint dither over the gradient that kills the banding dark
+   gradients always show, and lends the "expensive screensaver" texture. It
+   sits just above the ambient field and below all content. */
+.grain {
+  position: fixed;
+  inset: -50%;
+  z-index: -5;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
 }
 
 /* Hide the cursor when the screen has settled into deep idle. */

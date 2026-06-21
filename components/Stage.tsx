@@ -5,7 +5,9 @@ import AmbientField from "./AmbientField";
 import Clock from "./Clock";
 import FocusLine from "./FocusLine";
 import SoundscapeMixer, { EMPTY_MIXER, MixerLevels } from "./SoundscapeMixer";
+import FocusRing from "./FocusRing";
 import { useBreath } from "@/hooks/useBreath";
+import { useFocusSession } from "@/hooks/useFocusSession";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { usePersistentState } from "@/hooks/usePersistentState";
 import { ACCENT, IDLE, STORAGE_KEYS } from "@/lib/config";
@@ -35,6 +37,7 @@ export default function Stage() {
     EMPTY_MIXER,
   );
   const reduceMotion = useReducedMotion(reduceMotionPref);
+  const session = useFocusSession();
 
   useBreath(reduceMotion);
 
@@ -49,9 +52,13 @@ export default function Stage() {
     <main className="fixed inset-0 flex flex-col items-center justify-center">
       <AmbientField
         accent={accentRgb}
-        sessionProgress={0}
+        sessionProgress={session.progress}
         reduceMotion={reduceMotion}
       />
+
+      <div className="fixed inset-x-0 top-[5vmin] flex justify-center">
+        <FocusRing session={session} />
+      </div>
       <Clock opacity={IDLE.clockOpacity.active} reduceMotion={reduceMotion} />
       <div className="mt-[2vmin]">
         <FocusLine
